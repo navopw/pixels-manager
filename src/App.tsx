@@ -253,7 +253,7 @@ const App = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white" key={rerenderKey}>
+		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white">
 			<header className="text-center mb-10">
 				<div className="flex items-center justify-center space-x-4">
 					<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
@@ -530,7 +530,7 @@ const App = () => {
 							</button>
 						</div>
 
-						<div className="space-y-6">
+						<div className="space-y-6" key={rerenderKey}>
 							{activeProcesses
 								.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b))
 								.map(activeProcess => {
