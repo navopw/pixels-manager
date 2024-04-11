@@ -109,20 +109,30 @@ const App = () => {
 		const loadedProcesses = JSON.parse(localStorage.getItem('processes') || '[]') || [];
 		const loadedActiveProcesses = JSON.parse(localStorage.getItem('activeProcesses') || '[]') || [];
 
+		console.log("Loaded Plots:", loadedPlots);
+		console.log("Loaded Processes:", loadedProcesses);
+		console.log("Loaded Active Processes:", loadedActiveProcesses);
+
 		if (loadedPlots.length === 0) {
 			localStorage.setItem('plots', JSON.stringify(initialPlots));
+			setPlots(initialPlots);
+		} else {
+			setPlots(loadedPlots);
 		}
+
 		if (loadedProcesses.length === 0) {
 			localStorage.setItem('processes', JSON.stringify(initialProcesses));
+			setProcesses(initialProcesses);
+		} else {
+			setProcesses(loadedProcesses);
 		}
+
 		if (loadedActiveProcesses.length === 0) {
 			localStorage.setItem('activeProcesses', JSON.stringify(activeProcesses));
+			setActiveProcesses(activeProcesses);
+		} else {
+			setActiveProcesses(loadedActiveProcesses);
 		}
-
-		setPlots(loadedPlots);
-		setProcesses(loadedProcesses);
-		setActiveProcesses(loadedActiveProcesses);
-
 
 		// Update active processes time with the time from processes
 		setActiveProcesses(prev => {
