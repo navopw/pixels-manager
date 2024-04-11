@@ -560,14 +560,14 @@ const App = () => {
 														onClick={() => deleteActiveProcess(activeProcess.id)}
 														className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 													>
-														<XIcon className="w-6 h-6"  />
+														<XIcon className="w-6 h-6" />
 													</button>
 												</div>
 											</div>
 											<div className="text-lg mb-4">
 												<p>
-													<span className="font-semibold">Duration:</span>{" "}
-													{process.duration} minutes
+													<span className="font-semibold">Duration:</span> {process.duration}{" "}
+													minutes
 												</p>
 												<div className="flex justify-between">
 													<div>
@@ -581,14 +581,20 @@ const App = () => {
 												</div>
 											</div>
 											<hr className="my-4 border-gray-800" />
-											<div className="text-lg">
-												{getRemainingTimeUnix(activeProcess) > 0 && (
-													<p>
-														<span className="font-semibold">Time left:</span>{" "}
-														{millisToMinutesAndSeconds(getRemainingTimeUnix(activeProcess))}
-													</p>
-												)}
-												<p>
+											<div className="text-lg flex justify-between">
+												<div>
+													<span className="font-semibold">Time left:</span>{" "}
+													{getRemainingTimeUnix(activeProcess) > 0 ? (
+														<span>
+															{millisToMinutesAndSeconds(
+																getRemainingTimeUnix(activeProcess)
+															)}
+														</span>
+													) : (
+														<span>Process Completed</span>
+													)}
+												</div>
+												<div>
 													<span className="font-semibold">Pick up:</span>{" "}
 													{getRemainingTimeUnix(activeProcess) < 0 ? (
 														<span role="img" aria-label="check" className="text-sm">
@@ -599,7 +605,7 @@ const App = () => {
 															❌
 														</span>
 													)}
-												</p>
+												</div>
 											</div>
 										</div>
 									);
