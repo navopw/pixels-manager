@@ -1,5 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
@@ -89,7 +88,7 @@ const initialPlots: Plot[] = [
 ];
 
 const App = () => {
-	// Persistent states	
+	// Persistent states
 	const [processes, setProcesses] = useState<Process[]>([]);
 	const [plots, setPlots] = useState<Plot[]>([]);
 	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
@@ -99,7 +98,7 @@ const App = () => {
 	const [plotInputName, setPlotInputName] = useState<string>("");
 	const [plotInputDescription, setPlotInputDescription] = useState<string>("");
 
-	// Create active process
+	// Create process
 	const [createProcessName, setCreateProcessName] = useState<string>("");
 	const [createProcessDuration, setCreateProcessDuration] = useState<number>(0);
 
@@ -150,6 +149,7 @@ const App = () => {
 		localStorage.setItem("activeProcesses", JSON.stringify(activeProcesses));
 	}, [plots, processes, activeProcesses]);
 
+	// Plot
 	const createPlot = (id: number, name: string, description: string) => {
 		setPlots(prev => {
 			const newPlots = [...prev, { id, name, description }];
@@ -164,6 +164,7 @@ const App = () => {
 		});
 	};
 
+	// Process
 	const createProcess = (processName: string, duration: number) => {
 		const newProcess = {
 			id: Math.floor(Math.random() * 1000000),
@@ -179,9 +180,10 @@ const App = () => {
 
 	const startProcess = (processId: number, plotId: number) => {
 		const processFound = processes.find(process => process.id === processId);
+		const plotFound = plots.find(plot => plot.id === plotId);
 
-		if (!processFound) {
-			alert("Process not found");
+		if (!processFound || !plotFound) {
+			alert("Please select a process and a plot");
 			return;
 		}
 
@@ -197,7 +199,8 @@ const App = () => {
 		setCreateActiveProcessPlotId(0);
 	};
 
-	const resetProcess = (id: number) => {
+	// Active process
+	const resetActiveProcess = (id: number) => {
 		const processIndex = activeProcesses.findIndex(process => process.id === id);
 		if (processIndex !== -1) {
 			setActiveProcesses(prev => {
@@ -213,6 +216,22 @@ const App = () => {
 			const newActiveProcesses = prev.filter(process => process.id !== id);
 			return newActiveProcesses;
 		});
+	};
+
+	const getRemainingTimeUnix = (activeProcess: ActiveProcess) => {
+		const process = processes.find(p => p.id === activeProcess.processId);
+		if (!process) return 0;
+
+		const currentTime = Date.now();
+		const endTime = activeProcess.startTime + process.duration * 1000 * 60;
+		return endTime - currentTime;
+	};
+
+	const getEndTime = (activeProcess: ActiveProcess) => {
+		const process = processes.find(p => p.id === activeProcess.processId);
+		if (!process) return 0;
+
+		return activeProcess.startTime + process.duration * 1000 * 60;
 	};
 
 	return (
@@ -432,7 +451,7 @@ const App = () => {
 
 						<form className="space-y-4">
 							<div>
-								<label className="block font-semibold mb-1">Process Selector</label>
+								<label className="block font-semibold mb-1">Process</label>
 								<select
 									onChange={event => setCreateActiveProcessProcessId(parseInt(event.target.value))}
 									value={createActiveProcessProcessId ? createActiveProcessProcessId : "0"}
@@ -448,7 +467,7 @@ const App = () => {
 							</div>
 
 							<div>
-								<label className="block font-semibold mb-1">Plot Selector</label>
+								<label className="block font-semibold mb-1">Plot</label>
 								<select
 									onChange={event => setCreateActiveProcessPlotId(parseInt(event.target.value))}
 									value={createActiveProcessPlotId ? createActiveProcessPlotId : "None"}
@@ -486,7 +505,7 @@ const App = () => {
 						</div>
 
 						<div className="space-y-6">
-							{activeProcesses.map(activeProcess => {
+							{activeProcesses.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b)).map(activeProcess => {
 								const process = processes.find(p => p.id === activeProcess.processId);
 								const plot = plots.find(p => p.id === activeProcess.plotId);
 
@@ -504,7 +523,7 @@ const App = () => {
 											<div>
 												<button
 													type="button"
-													onClick={() => resetProcess(activeProcess.id)}
+													onClick={() => resetActiveProcess(activeProcess.id)}
 													className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
 												>
 													Reset
@@ -529,31 +548,23 @@ const App = () => {
 											</p>
 											<p>
 												<span className="font-semibold">End:</span>{" "}
-												{dayjs(activeProcess.startTime + process.duration * 1000 * 60).format(
-													"DD.MM.YYYY HH:mm"
-												)}
+												{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
 											</p>
 										</div>
 										<hr className="my-4 border-gray-800" />
 										<div className="text-lg">
 											<p>
 												<span className="font-semibold">Time left:</span>{" "}
-												{dayjs(activeProcess.startTime! + process.duration * 1000 * 60).diff(
-													dayjs(),
-													"minutes"
-												)}{" "}
-												minutes
+												{dayjs(getRemainingTimeUnix(activeProcess)).format("mm")} minutes
 											</p>
 											<p>
 												<span className="font-semibold">Pick up:</span>{" "}
-												{dayjs(
-													activeProcess.startTime! + process.duration * 1000 * 60
-												).isBefore(Date.now()) ? (
-													<span role="img" aria-label="check" className="text-xl">
+												{getRemainingTimeUnix(activeProcess) < 0 ? (
+													<span role="img" aria-label="check" className="text-sm">
 														✅
 													</span>
 												) : (
-													<span role="img" aria-label="cross" className="text-xl">
+													<span role="img" aria-label="cross" className="text-sm">
 														❌
 													</span>
 												)}
