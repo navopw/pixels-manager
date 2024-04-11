@@ -20,6 +20,8 @@ type ActiveProcess = {
 	processId: number;
 	plotId: number;
 	startTime: number;
+
+	soundPlayed: boolean;
 };
 
 const initialProcesses: Process[] = [
@@ -180,7 +182,9 @@ const App = () => {
 			id: Math.floor(Math.random() * 1000000),
 			processId: processFound.id,
 			plotId,
-			startTime: Date.now()
+			startTime: Date.now(),
+
+			soundPlayed: false
 		};
 
 		setActiveProcesses(prev => [...prev, newProcess]);
@@ -457,11 +461,11 @@ type ProcessManagementDialogProps = {
 };
 
 const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
-	const [processInputId, setProcessInputId] = useState(0);
 	const [processInputName, setProcessInputName] = useState("");
 	const [processInputDuration, setProcessInputDuration] = useState(0);
 
 	// Editing
+	const [processInputId, setProcessInputId] = useState(0);
 	const [isEditing, setIsEditing] = useState(false);
 
 	if (!props.isOpen) return null;
@@ -486,17 +490,19 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 					</button>
 				</div>
 				<div className="space-y-4">
-					<form className="grid grid-cols-4 gap-4">
-						<div>
-							<label className="block font-semibold mb-1">Process ID</label>
-							<input
-								type="number"
-								placeholder="Process ID"
-								onChange={event => setProcessInputId(parseInt(event.target.value))}
-								value={processInputId}
-								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-							/>
-						</div>
+					<form className="flex space-x-4">
+						{isEditing && (
+							<div>
+								<label className="block font-semibold mb-1">Process ID</label>
+								<input
+									type="number"
+									placeholder="Process ID"
+									onChange={event => setProcessInputId(parseInt(event.target.value))}
+									value={processInputId}
+									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+								/>
+							</div>
+						)}
 						<div>
 							<label className="block font-semibold mb-1">Process Name</label>
 							<input
@@ -521,7 +527,11 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 							<button
 								type="button"
 								onClick={() => {
-									props.onProcessUpdate(processInputId, processInputName, processInputDuration);
+									props.onProcessUpdate(
+										Math.random() * 10000,
+										processInputName,
+										processInputDuration
+									);
 									setIsEditing(false);
 									setProcessInputId(0);
 									setProcessInputName("");
@@ -593,7 +603,7 @@ const StartProcess = (props: StartProcessProps) => {
 	const [plotId, setPlotId] = useState(0);
 
 	return (
-		<LiquidBackground>
+		<>
 			<h1 className="text-2xl font-bold mb-6 text-white">Start Process</h1>
 
 			<form className="space-y-6 bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
@@ -638,7 +648,7 @@ const StartProcess = (props: StartProcessProps) => {
 					Start Process
 				</button>
 			</form>
-		</LiquidBackground>
+		</>
 	);
 };
 
@@ -657,9 +667,21 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 	const [currentTime, setCurrentTime] = useState(Date.now());
 
 	useEffect(() => {
-		const interval = setInterval(() => setCurrentTime(Date.now()), 5 * 1000);
+		const interval = setInterval(() => setCurrentTime(Date.now()), 1000);
 		return () => clearInterval(interval);
 	}, []);
+
+	useEffect(() => {
+		props.activeProcesses.forEach(process => {
+			const timeLeft = getRemainingTimeUnix(process);
+
+			if (!process.soundPlayed && timeLeft <= 0) {
+				playSound();
+
+				process.soundPlayed = true;
+			}
+		});
+	}, [currentTime]);
 
 	const getRemainingTimeUnix = (activeProcess: ActiveProcess) => {
 		const process = props.processes.find(p => p.id === activeProcess.processId);
@@ -681,6 +703,11 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 
 		return minutes > 0 ? `${minutes} minutes ${seconds} seconds` : `${seconds} seconds`;
 	};
+
+	const playSound = () => {
+		const audio = new Audio("/task-ready.mp3");
+		audio.play();
+	}
 
 	return (
 		<div>
@@ -710,7 +737,10 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 						return (
 							<div
 								key={uuidv4()}
-								className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-4"
+								className={
+									"bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-4" +
+									(isCompleted ? " border-2 border-green-400" : "")
+								}
 							>
 								<div className="flex justify-between items-center mb-2">
 									<h2 className="text-xl font-bold">
@@ -722,20 +752,20 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 											onClick={() => props.onReset(activeProcess.id)}
 											className="bg-green-600 hover:bg-green-700 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-600 focus:ring-offset-1 focus:ring-offset-gray-900"
 										>
-											<RefreshCcw className="w-4 h-4" />
+											<RefreshCcw className="w-6 h-6" />
 										</button>
 										<button
 											type="button"
 											onClick={() => props.onDelete(activeProcess.id)}
 											className="bg-red-700 hover:bg-red-800 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1 focus:ring-offset-gray-900"
 										>
-											<XIcon className="w-4 h-4" />
+											<XIcon className="w-6 h-6" />
 										</button>
 									</div>
 								</div>
 								<div className="text-md mb-2">
 									<p>
-										<span className="font-semibold">Duration:</span> {process.duration}m
+										<span className="font-semibold">Duration:</span> {process.duration} minutes
 									</p>
 									<div className="flex justify-between text-md">
 										<div>
@@ -749,78 +779,22 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 									</div>
 								</div>
 								<hr className="my-2 border-gray-800" />
-								<div className="text-md flex justify-between">
-									<div>
-										<span className="font-semibold">Remaining:</span>{" "}
-										{isCompleted ? (
-											<span>Done</span>
-										) : (
+								<div className="text-md flex">
+									{!isCompleted ? (
+										<div>
+											<span className="font-semibold">Timer:</span>{" "}
 											<span>{formatRemainingTime(remainingTime)}</span>
-										)}
-									</div>
-									<div>
-										{isCompleted ? (
-											<span role="img" aria-label="check" className="text-md">
-												✅
-											</span>
-										) : (
-											<span role="img" aria-label="cross" className="text-md">
-												❌
-											</span>
-										)}
-									</div>
+										</div>
+									) : (
+										<span role="img" aria-label="check" className="text-md">
+											Timer: ✅
+										</span>
+									)}
 								</div>
 							</div>
 						);
 					})}
 			</div>
-		</div>
-	);
-};
-
-type LiquidBackgroundProps = {
-	children: React.ReactNode;
-};
-
-const LiquidBackground = ({ children }: LiquidBackgroundProps) => {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-
-	useEffect(() => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		const context = canvas.getContext('2d');
-		if (!context) return;
-
-		let animationFrameId: number;
-
-		// Function to generate the liquid effect
-		const render = () => {
-			const { width, height } = canvas.getBoundingClientRect();
-			canvas.width = width;
-			canvas.height = height;
-
-			context.clearRect(0, 0, width, height);
-			
-			// Liquid effect logic goes here
-			// This is a placeholder for the actual effect logic
-			context.fillStyle = 'rgba(0, 200, 255, 0.2)';
-			context.fillRect(0, 0, width, height);
-
-			animationFrameId = window.requestAnimationFrame(render);
-		};
-
-		render();
-
-		return () => {
-			window.cancelAnimationFrame(animationFrameId);
-		};
-	}, []);
-
-	return (
-		<div style={{ position: 'relative' }}>
-			<canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: -1, width: '100%', height: '100%' }} />
-			{children}
 		</div>
 	);
 };
