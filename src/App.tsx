@@ -176,25 +176,22 @@ const App = () => {
 	};
 
 	const deleteProcess = (id: number) => {
-		setProcesses(prev => {
-			const newProcesses = prev.filter(process => process.id !== id);
-			return newProcesses;
-		});
+		setProcesses(prev => prev.filter(process => process.id !== id));
 	};
 
 	const startProcess = (processName: string, plotId: number) => {
 		const processFound = processes.find(process => process.process === processName);
-
 		if (!processFound) return;
 
-		setActiveProcesses(prev => {
-			const newActiveProcesses = [...prev, { 
-				...processFound,
-				startTime: Date.now(),
-				plotId
-			}];
-			return newActiveProcesses;
-		});
+		const newProcess = {
+			...processFound,
+			startTime: Date.now(),
+			plotId
+		};
+
+		console.log("Starting process", newProcess);
+
+		setActiveProcesses(prev => [...prev, newProcess]);
 	};
 
 	const resetProcess = (id: number) => {
