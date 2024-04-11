@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "lucide-react";
 
 type Plot = {
 	id: number;
@@ -237,9 +238,17 @@ const App = () => {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white">
 			<header className="text-center mb-10">
-				<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
-					Pixels.xyz - Manager
-				</h1>
+				<div className="flex items-center justify-center space-x-4">
+					<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+						Pixels.xyz - Manager
+					</h1>
+					<div>
+						<a href="https://github.com/navopw/pixels-manager" target="_blank" rel="noopener noreferrer">
+							<Link className="text-white cursor-pointer">GitHub Repository</Link>
+						</a>
+					</div>
+				</div>
+
 				<p className="text-xl mt-2">An extensive process management tool to farm in Pixels.xyz</p>
 				<p className="text-md text-gray-300 mt-2">
 					All data entered will be retained in your browser's local storage unless it is cleared.
@@ -505,74 +514,76 @@ const App = () => {
 						</div>
 
 						<div className="space-y-6">
-							{activeProcesses.sort((a, b) => getRemainingTimeUnix(b) - getRemainingTimeUnix(a)).map(activeProcess => {
-								const process = processes.find(p => p.id === activeProcess.processId);
-								const plot = plots.find(p => p.id === activeProcess.plotId);
+							{activeProcesses
+								.sort((a, b) => getRemainingTimeUnix(b) - getRemainingTimeUnix(a))
+								.map(activeProcess => {
+									const process = processes.find(p => p.id === activeProcess.processId);
+									const plot = plots.find(p => p.id === activeProcess.plotId);
 
-								if (!process || !plot) return null;
+									if (!process || !plot) return null;
 
-								return (
-									<div
-										key={uuidv4()}
-										className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6"
-									>
-										<div className="flex justify-between items-center mb-4">
-											<h2 className="text-2xl font-bold">
-												{process.name} - {plot.name}
-											</h2>
-											<div>
-												<button
-													type="button"
-													onClick={() => resetActiveProcess(activeProcess.id)}
-													className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
-												>
-													Reset
-												</button>
-												<button
-													type="button"
-													onClick={() => deleteActiveProcess(activeProcess.id)}
-													className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
-												>
-													Delete
-												</button>
+									return (
+										<div
+											key={uuidv4()}
+											className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6"
+										>
+											<div className="flex justify-between items-center mb-4">
+												<h2 className="text-2xl font-bold">
+													{process.name} - {plot.name}
+												</h2>
+												<div>
+													<button
+														type="button"
+														onClick={() => resetActiveProcess(activeProcess.id)}
+														className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
+													>
+														Reset
+													</button>
+													<button
+														type="button"
+														onClick={() => deleteActiveProcess(activeProcess.id)}
+														className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+													>
+														Delete
+													</button>
+												</div>
+											</div>
+											<div className="text-lg mb-4">
+												<p>
+													<span className="font-semibold">Duration:</span>{" "}
+													{dayjs(process.duration).format("HH:mm")}
+												</p>
+												<p>
+													<span className="font-semibold">Start:</span>{" "}
+													{dayjs(activeProcess.startTime).format("DD.MM.YYYY HH:mm")}
+												</p>
+												<p>
+													<span className="font-semibold">End:</span>{" "}
+													{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
+												</p>
+											</div>
+											<hr className="my-4 border-gray-800" />
+											<div className="text-lg">
+												<p>
+													<span className="font-semibold">Time left:</span>{" "}
+													{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
+												</p>
+												<p>
+													<span className="font-semibold">Pick up:</span>{" "}
+													{getRemainingTimeUnix(activeProcess) < 0 ? (
+														<span role="img" aria-label="check" className="text-sm">
+															✅
+														</span>
+													) : (
+														<span role="img" aria-label="cross" className="text-sm">
+															❌
+														</span>
+													)}
+												</p>
 											</div>
 										</div>
-										<div className="text-lg mb-4">
-											<p>
-												<span className="font-semibold">Duration:</span>{" "}
-												{dayjs(process.duration).format("HH:mm")}
-											</p>
-											<p>
-												<span className="font-semibold">Start:</span>{" "}
-												{dayjs(activeProcess.startTime).format("DD.MM.YYYY HH:mm")}
-											</p>
-											<p>
-												<span className="font-semibold">End:</span>{" "}
-												{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
-											</p>
-										</div>
-										<hr className="my-4 border-gray-800" />
-										<div className="text-lg">
-											<p>
-												<span className="font-semibold">Time left:</span>{" "}
-												{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
-											</p>
-											<p>
-												<span className="font-semibold">Pick up:</span>{" "}
-												{getRemainingTimeUnix(activeProcess) < 0 ? (
-													<span role="img" aria-label="check" className="text-sm">
-														✅
-													</span>
-												) : (
-													<span role="img" aria-label="cross" className="text-sm">
-														❌
-													</span>
-												)}
-											</p>
-										</div>
-									</div>
-								);
-							})}
+									);
+								})}
 						</div>
 					</div>
 				</div>
