@@ -31,7 +31,7 @@ const initialProcesses: Process[] = [
 	{
 		id: 2,
 		name: "Honey",
-		duration: 45
+		duration: 60
 	},
 	{
 		id: 3,
