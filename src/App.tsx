@@ -529,7 +529,7 @@ const App = () => {
 							</button>
 						</div>
 
-						<div className="space-y-6" key={rerenderKey}>
+						<div className="space-y-4" key={rerenderKey}>
 							{activeProcesses
 								.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b))
 								.map(activeProcess => {
