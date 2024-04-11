@@ -529,7 +529,8 @@ const StartProcess = (props: StartProcessProps) => {
 						<option value="None">Please select</option>
 						{props.plots.map(plot => (
 							<option key={uuidv4()} value={plot.id}>
-								{plot.name} - {plot.description}
+								{plot.name}
+								{plot.description.length > 0 ? " - " + plot.description : ""}
 							</option>
 						))}
 					</select>
