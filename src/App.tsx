@@ -575,7 +575,7 @@ const App = () => {
 											</div>
 											<hr className="my-4 border-gray-800" />
 											<div className="text-lg">
-												{getRemainingTimeUnix(activeProcess) < 0 && (
+												{getRemainingTimeUnix(activeProcess) > 0 && (
 													<p>
 														<span className="font-semibold">Time left:</span>{" "}
 														{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
