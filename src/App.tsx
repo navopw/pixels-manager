@@ -222,167 +222,209 @@ const App = () => {
 				</p>
 			</header>
 			<div className="max-w-6xl mx-auto">
-				<div className="mb-8">
-					<div
-						className="flex items-center justify-between bg-gradient-to-r from-blue-800 to-purple-900 font-semibold py-2 px-4 rounded-t-md cursor-pointer"
-						onClick={() => setIsPlotManagementOpen(!isPlotManagementOpen)}
-					>
-						<h1 className="text-2xl">Plot Management</h1>
-						<span>{isPlotManagementOpen ? "▼" : "▲"}</span>
-					</div>
-					{isPlotManagementOpen && (
-						<div className="bg-gray-900 shadow-md rounded-b-md p-6">
-							<form className="grid grid-cols-4 gap-4">
-								<div>
-									<label className="block font-semibold mb-1">Plot ID</label>
-									<input
-										type="number"
-										placeholder="Plot ID"
-										onChange={event => setPlotInputId(parseInt(event.target.value))}
-										value={plotInputId}
-										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-									/>
-								</div>
-								<div>
-									<label className="block font-semibold mb-1">Plot Name</label>
-									<input
-										type="text"
-										placeholder="Plot Name"
-										onChange={event => setPlotInputName(event.target.value)}
-										value={plotInputName}
-										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-									/>
-								</div>
-								<div>
-									<label className="block font-semibold mb-1">Plot Description</label>
-									<input
-										type="text"
-										placeholder="Plot Description"
-										onChange={event => setPlotInputDescription(event.target.value)}
-										value={plotInputDescription}
-										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-									/>
-								</div>
-								<button
-									type="button"
-									onClick={() => createPlot(plotInputId, plotInputName, plotInputDescription)}
-									className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-								>
-									Add Plot
-								</button>
-							</form>
-							<div className="space-y-4 mt-4">
-								{plots.map(plot => (
-									<div
-										key={uuidv4()}
-										className="flex items-center justify-between bg-gray-800 rounded-md p-4"
-									>
-										<div>
-											<p className="text-lg font-semibold">{plot.name}</p>
-											<input
-												type="text"
-												placeholder="Edit Plot Description"
-												onChange={event => {
-													const updatedPlots = plots.map(p => {
-														if (p.id === plot.id) {
-															return { ...p, description: event.target.value };
-														}
-														return p;
-													});
-													setPlots(updatedPlots);
-												}}
-												value={plot.description}
-												className="w-80 bg-gray-700 rounded-md px-3 py-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-											/>
-										</div>
-										<button
-											type="button"
-											onClick={() => deletePlot(plot.id)}
-											className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-										>
-											Delete
-										</button>
-									</div>
-								))}
-							</div>
+				<div className="grid grid-cols-2 gap-4 mb-4">
+					<div className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
+						<div className="flex justify-between items-center">
+							<h1 className="text-2xl font-bold text-white">Plot Management</h1>
+							<button
+								type="button"
+								onClick={() => setIsPlotManagementOpen(true)}
+								className="bg-white text-black font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+							>
+								Open
+							</button>
 						</div>
-					)}
+					</div>
+
+					<div className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
+						<div className="flex justify-between items-center">
+							<h1 className="text-2xl font-bold text-white">Process Management</h1>
+							<button
+								type="button"
+								onClick={() => setIsProcessManagementOpen(true)}
+								className="bg-white text-black font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+							>
+								Open
+							</button>
+						</div>
+					</div>
 				</div>
 
-				<div className="mb-8">
-					<div
-						className="flex items-center justify-between bg-gradient-to-r from-blue-800 to-purple-900 font-semibold py-2 px-4 rounded-t-md cursor-pointer"
-						onClick={() => setIsProcessManagementOpen(!isProcessManagementOpen)}
-					>
-						<h1 className="text-2xl">Process Management</h1>
-						<span>{isProcessManagementOpen ? "▼" : "▲"}</span>
-					</div>
-					{isProcessManagementOpen && (
-						<div className="bg-gray-900 shadow-md rounded-b-md p-6">
-							<form
-								className="space-y-4"
-								onSubmit={e => {
-									e.preventDefault();
-									const process = (document.getElementById("process-input") as HTMLInputElement)
-										.value;
-									const time = parseInt(
-										(document.getElementById("time-input") as HTMLInputElement).value
-									);
-									createProcess(process, time);
-								}}
-							>
-								<div>
-									<label className="block font-semibold mb-1">Process</label>
-									<input
-										id="process-input"
-										type="text"
-										placeholder="Process"
-										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-									/>
-								</div>
-								<div>
-									<label className="block font-semibold mb-1">Time (minutes)</label>
-									<input
-										id="time-input"
-										type="number"
-										placeholder="Time"
-										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-									/>
-								</div>
+				{isPlotManagementOpen && (
+					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+						<div className="bg-gradient-to-br from-gray-900 to-black shadow-lg rounded-lg p-6">
+							<div className="flex justify-between items-center mb-4">
+								<h1 className="text-2xl font-bold">Plot Management</h1>
 								<button
-									type="submit"
-									className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									type="button"
+									onClick={() => setIsPlotManagementOpen(false)}
+									className="bg-red-800 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
 								>
-									Create Process
+									Close
 								</button>
-							</form>
-							<div className="space-y-4 mt-4">
-								{processes.map(process => (
-									<div
-										key={uuidv4()}
-										className="flex items-center justify-between bg-gray-800 rounded-md p-4"
-									>
-										<div>
-											<p className="text-lg font-semibold">{process.name}</p>
-											<p>Duration: {process.duration} minutes</p>
-										</div>
-										<button
-											type="button"
-											onClick={() => deleteProcess(process.id)}
-											className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-										>
-											Delete
-										</button>
+							</div>
+							<div className="space-y-4">
+								<form className="grid grid-cols-4 gap-4">
+									<div>
+										<label className="block font-semibold mb-1">Plot ID</label>
+										<input
+											type="number"
+											placeholder="Plot ID"
+											onChange={event => setPlotInputId(parseInt(event.target.value))}
+											value={plotInputId}
+											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+										/>
 									</div>
-								))}
+									<div>
+										<label className="block font-semibold mb-1">Plot Name</label>
+										<input
+											type="text"
+											placeholder="Plot Name"
+											onChange={event => setPlotInputName(event.target.value)}
+											value={plotInputName}
+											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+										/>
+									</div>
+									<div>
+										<label className="block font-semibold mb-1">Plot Description</label>
+										<input
+											type="text"
+											placeholder="Plot Description"
+											onChange={event => setPlotInputDescription(event.target.value)}
+											value={plotInputDescription}
+											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+										/>
+									</div>
+									<button
+										type="button"
+										onClick={() => createPlot(plotInputId, plotInputName, plotInputDescription)}
+										className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Add Plot
+									</button>
+								</form>
+								<div className="space-y-4 mt-4">
+									{plots.map(plot => (
+										<div
+											key={uuidv4()}
+											className="flex items-center justify-between bg-gray-800 rounded-md p-4"
+										>
+											<div>
+												<p className="text-lg font-semibold text-white">{plot.name}</p>
+												<input
+													type="text"
+													placeholder="Edit Plot Description"
+													onChange={event => {
+														const updatedPlots = plots.map(p => {
+															if (p.id === plot.id) {
+																return { ...p, description: event.target.value };
+															}
+															return p;
+														});
+														setPlots(updatedPlots);
+													}}
+													value={plot.description}
+													className="w-80 bg-gray-700 rounded-md px-3 py-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+												/>
+											</div>
+											<button
+												type="button"
+												onClick={() => deletePlot(plot.id)}
+												className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+											>
+												Delete
+											</button>
+										</div>
+									))}
+								</div>
 							</div>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
+
+				{isProcessManagementOpen && (
+					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+						<div className="bg-gradient-to-br from-gray-900 to-black shadow-lg rounded-lg p-6">
+							<div className="flex justify-between items-center mb-4">
+								<h1 className="text-2xl font-bold">Process Management</h1>
+								<button
+									type="button"
+									onClick={() => setIsProcessManagementOpen(false)}
+									className="bg-red-800 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+								>
+									Close
+								</button>
+							</div>
+							<div className="space-y-4">
+								<form
+									className="flex justify-between items-centert space-x-4"
+									onSubmit={e => {
+										e.preventDefault();
+										const process = (document.getElementById("process-input") as HTMLInputElement)
+											.value;
+										const time = parseInt(
+											(document.getElementById("time-input") as HTMLInputElement).value
+										);
+										createProcess(process, time);
+									}}
+								>
+									<div className="flex-1">
+										<label htmlFor="process-input" className="block font-semibold mb-1">
+											Process
+										</label>
+										<input
+											id="process-input"
+											type="text"
+											placeholder="Process"
+											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+										/>
+									</div>
+									<div className="flex-1">
+										<label htmlFor="time-input" className="block font-semibold mb-1">
+											Time (minutes)
+										</label>
+										<input
+											id="time-input"
+											type="number"
+											placeholder="Time"
+											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+										/>
+									</div>
+									<button
+										type="submit"
+										className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Create Process
+									</button>
+								</form>
+								<div className="space-y-4 mt-4">
+									{processes.map(process => (
+										<div
+											key={uuidv4()}
+											className="flex items-center justify-between bg-gray-800 rounded-md p-4"
+										>
+											<div>
+												<p className="text-lg font-semibold text-white">{process.name}</p>
+												<p>Duration: {process.duration} minutes</p>
+											</div>
+											<button
+												type="button"
+												onClick={() => deleteProcess(process.id)}
+												className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+											>
+												Delete
+											</button>
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
 
 				<div className="grid grid-cols-2 gap-8">
 					<div>
-						<h1 className="text-2xl font-bold mb-4">Process Management</h1>
+						<h1 className="text-2xl font-bold mb-4">Start process</h1>
 
 						<form className="space-y-4">
 							<div>
