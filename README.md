@@ -1,14 +1,23 @@
-# React Boilerplate
+# Pixels.xyz Manager
 
--   React
--   Vite
--   Tailwind
--   React Router
--   [Zustand](https://github.com/pmndrs/zustand) for State Management
+Welcome to Pixels.xyz Manager! This application helps you manage your active processes efficiently. You can start, reset, and delete processes, as well as view detailed information about each active process.
 
-## Available Scripts
+## Features
 
-| Name            | Description                                          |
-| --------------- | ---------------------------------------------------- |
-| `npm run dev`   | Runs the app in the development mode.                |
-| `npm run build` | Builds the app for production to the `build` folder. |
+### Plot
+- **Add Plot:** Add a new plot with a name and description.
+- **Delete Plot:** Remove a plot from the list of available plots.
+
+### Process
+- **Start Process:** Initiate a new process by selecting a process and a plot.
+- **Reset Process:** Reset a currently active process to restart the timer.
+- **Delete Process:** Remove a process from the active list.
+- **Clear All:** Clear all active processes at once.
+
+## Active Processes
+
+In the Active Processes section, you can see a list of all active processes sorted by remaining time.
+
+Enjoy managing your processes with Pixels.xyz Manager!
+
+
