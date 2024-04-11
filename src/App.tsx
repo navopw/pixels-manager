@@ -174,9 +174,6 @@ const App = () => {
 
 	const startProcess = (processId: number, plotId: number) => {
 		const processFound = processes.find(process => process.id === processId);
-		
-		console.log("Process name", processId);
-		console.log("Process found", processFound);
 
 		if (!processFound) return;
 
@@ -187,9 +184,9 @@ const App = () => {
 			startTime: Date.now()
 		};
 
-		console.log("Starting process", newProcess);
-
 		setActiveProcesses(prev => [...prev, newProcess]);
+		setProcessSelector(0);
+		setPlotSelector(0);
 	};
 
 	const resetProcess = (id: number) => {
@@ -232,38 +229,36 @@ const App = () => {
 					</div>
 					{isPlotManagementOpen && (
 						<div className="bg-gray-900 shadow-md rounded-b-md p-6">
-							<form className="space-y-4">
-								<div className="grid grid-cols-3 gap-4">
-									<div>
-										<label className="block font-semibold mb-1">Plot ID</label>
-										<input
-											type="number"
-											placeholder="Plot ID"
-											onChange={event => setPlotInputId(parseInt(event.target.value))}
-											value={plotInputId}
-											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-										/>
-									</div>
-									<div>
-										<label className="block font-semibold mb-1">Plot Name</label>
-										<input
-											type="text"
-											placeholder="Plot Name"
-											onChange={event => setPlotInputName(event.target.value)}
-											value={plotInputName}
-											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-										/>
-									</div>
-									<div>
-										<label className="block font-semibold mb-1">Plot Description</label>
-										<input
-											type="text"
-											placeholder="Plot Description"
-											onChange={event => setPlotInputDescription(event.target.value)}
-											value={plotInputDescription}
-											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-										/>
-									</div>
+							<form className="grid grid-cols-4 gap-4">
+								<div>
+									<label className="block font-semibold mb-1">Plot ID</label>
+									<input
+										type="number"
+										placeholder="Plot ID"
+										onChange={event => setPlotInputId(parseInt(event.target.value))}
+										value={plotInputId}
+										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+									/>
+								</div>
+								<div>
+									<label className="block font-semibold mb-1">Plot Name</label>
+									<input
+										type="text"
+										placeholder="Plot Name"
+										onChange={event => setPlotInputName(event.target.value)}
+										value={plotInputName}
+										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+									/>
+								</div>
+								<div>
+									<label className="block font-semibold mb-1">Plot Description</label>
+									<input
+										type="text"
+										placeholder="Plot Description"
+										onChange={event => setPlotInputDescription(event.target.value)}
+										value={plotInputDescription}
+										className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+									/>
 								</div>
 								<button
 									type="button"
@@ -281,7 +276,21 @@ const App = () => {
 									>
 										<div>
 											<p className="text-lg font-semibold">{plot.name}</p>
-											<p>{plot.description}</p>
+											<input
+												type="text"
+												placeholder="Edit Plot Description"
+												onChange={event => {
+													const updatedPlots = plots.map(p => {
+														if (p.id === plot.id) {
+															return { ...p, description: event.target.value };
+														}
+														return p;
+													});
+													setPlots(updatedPlots);
+												}}
+												value={plot.description}
+												className="w-80 bg-gray-700 rounded-md px-3 py-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+											/>
 										</div>
 										<button
 											type="button"
@@ -416,7 +425,16 @@ const App = () => {
 					</div>
 
 					<div>
-						<h1 className="text-2xl font-bold mb-4">Active Processes</h1>
+						<div className="flex justify-between items-center mb-4">
+							<h1 className="text-2xl font-bold">Active Processes</h1>
+							<button
+								type="button"
+								onClick={() => setActiveProcesses([])}
+								className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+							>
+								Clear All
+							</button>
+						</div>
 
 						<div className="space-y-6">
 							{activeProcesses.map(activeProcess => {
