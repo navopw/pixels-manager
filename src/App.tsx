@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
-import { Link, RefreshCcw, Star, Trash, XIcon } from "lucide-react";
+import { Link, RefreshCcw, Trash, XIcon } from "lucide-react";
 
 type Plot = {
 	id: number;
@@ -244,21 +244,21 @@ const App = () => {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-2 gap-8">
-						<StartProcess
-							processes={processes}
-							plots={plots}
-							onStart={startProcess}
-						/>
+					<div className="grid grid-cols-3 gap-8">
+						<div className="col-span-1">
+							<StartProcess processes={processes} plots={plots} onStart={startProcess} />
+						</div>
 
-						<ActiveProcesses
-							activeProcesses={activeProcesses}
-							onDelete={deleteActiveProcess}
-							onReset={resetActiveProcess}
-							processes={processes}
-							plots={plots}
-							onClear={() => setActiveProcesses([])}
-						/>
+						<div className="col-span-2">
+							<ActiveProcesses
+								activeProcesses={activeProcesses}
+								onDelete={deleteActiveProcess}
+								onReset={resetActiveProcess}
+								processes={processes}
+								plots={plots}
+								onClear={() => setActiveProcesses([])}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -499,16 +499,16 @@ const StartProcess = (props: StartProcessProps) => {
 	const [plotId, setPlotId] = useState(0);
 
 	return (
-		<div>
-			<h1 className="text-2xl font-bold mb-4">Start process</h1>
+		<LiquidBackground>
+			<h1 className="text-2xl font-bold mb-6 text-white">Start Process</h1>
 
-			<form className="space-y-4">
+			<form className="space-y-6 bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
 				<div>
-					<label className="block font-semibold mb-1">Process</label>
+					<label className="block font-semibold mb-1 text-white">Process</label>
 					<select
 						onChange={event => setProcessId(parseInt(event.target.value))}
 						value={processId ? processId : "0"}
-						className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
+						className="w-full bg-gray-800 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 text-white"
 					>
 						<option value="None">Please select</option>
 						{props.processes.map(process => (
@@ -520,11 +520,11 @@ const StartProcess = (props: StartProcessProps) => {
 				</div>
 
 				<div>
-					<label className="block font-semibold mb-1">Plot</label>
+					<label className="block font-semibold mb-1 text-white">Plot</label>
 					<select
 						onChange={event => setPlotId(parseInt(event.target.value))}
 						value={plotId ? plotId : "None"}
-						className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
+						className="w-full bg-gray-800 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 text-white"
 					>
 						<option value="None">Please select</option>
 						{props.plots.map(plot => (
@@ -538,12 +538,12 @@ const StartProcess = (props: StartProcessProps) => {
 				<button
 					type="button"
 					onClick={() => props.onStart(processId, plotId)}
-					className="bg-green-800 hover:bg-green-9000 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+					className="w-full bg-green-600 hover:bg-green-700 font-semibold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
 				>
 					Start Process
 				</button>
 			</form>
-		</div>
+		</LiquidBackground>
 	);
 };
 
@@ -570,8 +570,7 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 		const process = props.processes.find(p => p.id === activeProcess.processId);
 		if (!process) return 0;
 
-		const endTime = activeProcess.startTime + process.duration * 1000 * 60;
-		return endTime - currentTime;
+		return activeProcess.startTime + process.duration * 1000 * 60 - currentTime;
 	};
 
 	const getEndTime = (activeProcess: ActiveProcess) => {
@@ -581,31 +580,27 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 		return activeProcess.startTime + process.duration * 1000 * 60;
 	};
 
-	const millisToMinutesAndSeconds = (millis: number) => {
+	const formatRemainingTime = (millis: number) => {
 		const minutes = Math.floor(millis / 60000);
-		const seconds = ((millis % 60000) / 1000).toFixed(0); // Corrected the modulo calculation
+		const seconds = Math.floor((millis % 60000) / 1000);
 
-		if (minutes == 0) {
-			return `${seconds} seconds`;
-		}
-
-		return `${minutes} minutes ${seconds} seconds`;
+		return minutes > 0 ? `${minutes} minutes ${seconds} seconds` : `${seconds} seconds`;
 	};
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-4">
+			<div className="flex justify-between items-center mb-6">
 				<h1 className="text-2xl font-bold">Active Processes</h1>
 				<button
 					type="button"
 					onClick={props.onClear}
 					className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 				>
-					<Trash className="w-6 h-6" />
+					<Trash className="w-4 h-4" />
 				</button>
 			</div>
 
-			<div className="space-y-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
 				{props.activeProcesses
 					.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b))
 					.map(activeProcess => {
@@ -614,67 +609,67 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 
 						if (!process || !plot) return null;
 
+						const remainingTime = getRemainingTimeUnix(activeProcess);
+						const isCompleted = remainingTime < 0;
+
 						return (
 							<div
 								key={uuidv4()}
-								className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6"
+								className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-4"
 							>
-								<div className="flex justify-between items-center mb-4">
-									<h2 className="text-2xl font-bold">
+								<div className="flex justify-between items-center mb-2">
+									<h2 className="text-xl font-bold">
 										{process.name} - {plot.name}
 									</h2>
 									<div className="flex space-x-2">
 										<button
 											type="button"
 											onClick={() => props.onReset(activeProcess.id)}
-											className="bg-green-600 hover:bg-green-700 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-4 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+											className="bg-green-600 hover:bg-green-700 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-600 focus:ring-offset-1 focus:ring-offset-gray-900"
 										>
-											<RefreshCcw className="w-6 h-6" />
+											<RefreshCcw className="w-4 h-4" />
 										</button>
 										<button
 											type="button"
 											onClick={() => props.onDelete(activeProcess.id)}
-											className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+											className="bg-red-700 hover:bg-red-800 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1 focus:ring-offset-gray-900"
 										>
-											<XIcon className="w-6 h-6" />
+											<XIcon className="w-4 h-4" />
 										</button>
 									</div>
 								</div>
-								<div className="text-lg mb-4">
+								<div className="text-md mb-2">
 									<p>
-										<span className="font-semibold">Duration:</span> {process.duration} minutes
+										<span className="font-semibold">Duration:</span> {process.duration}m
 									</p>
-									<div className="flex justify-between">
+									<div className="flex justify-between text-md">
 										<div>
 											<span className="font-semibold">Start:</span>{" "}
-											{dayjs(activeProcess.startTime).format("DD.MM.YYYY HH:mm")}
+											{dayjs(activeProcess.startTime).format("DD.MM HH:mm")}
 										</div>
 										<div>
 											<span className="font-semibold">End:</span>{" "}
-											{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
+											{dayjs(getEndTime(activeProcess)).format("DD.MM HH:mm")}
 										</div>
 									</div>
 								</div>
-								<hr className="my-4 border-gray-800" />
-								<div className="text-lg flex justify-between">
+								<hr className="my-2 border-gray-800" />
+								<div className="text-md flex justify-between">
 									<div>
-										<span className="font-semibold">Time left:</span>{" "}
-										{getRemainingTimeUnix(activeProcess) > 0 ? (
-											<span>
-												{millisToMinutesAndSeconds(getRemainingTimeUnix(activeProcess))}
-											</span>
+										<span className="font-semibold">Remaining:</span>{" "}
+										{isCompleted ? (
+											<span>Done</span>
 										) : (
-											<span>Process Completed</span>
+											<span>{formatRemainingTime(remainingTime)}</span>
 										)}
 									</div>
 									<div>
-										<span className="font-semibold">Ready:</span>{" "}
-										{getRemainingTimeUnix(activeProcess) < 0 ? (
-											<span role="img" aria-label="check" className="text-sm">
+										{isCompleted ? (
+											<span role="img" aria-label="check" className="text-md">
 												✅
 											</span>
 										) : (
-											<span role="img" aria-label="cross" className="text-sm">
+											<span role="img" aria-label="cross" className="text-md">
 												❌
 											</span>
 										)}
@@ -688,5 +683,51 @@ const ActiveProcesses = (props: ActiveProcessesProps) => {
 	);
 };
 
-export default App;
+type LiquidBackgroundProps = {
+	children: React.ReactNode;
+};
 
+const LiquidBackground = ({ children }: LiquidBackgroundProps) => {
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const context = canvas.getContext('2d');
+		if (!context) return;
+
+		let animationFrameId: number;
+
+		// Function to generate the liquid effect
+		const render = () => {
+			const { width, height } = canvas.getBoundingClientRect();
+			canvas.width = width;
+			canvas.height = height;
+
+			context.clearRect(0, 0, width, height);
+			
+			// Liquid effect logic goes here
+			// This is a placeholder for the actual effect logic
+			context.fillStyle = 'rgba(0, 200, 255, 0.2)';
+			context.fillRect(0, 0, width, height);
+
+			animationFrameId = window.requestAnimationFrame(render);
+		};
+
+		render();
+
+		return () => {
+			window.cancelAnimationFrame(animationFrameId);
+		};
+	}, []);
+
+	return (
+		<div style={{ position: 'relative' }}>
+			<canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: -1, width: '100%', height: '100%' }} />
+			{children}
+		</div>
+	);
+};
+
+export default App;
