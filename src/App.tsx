@@ -245,10 +245,9 @@ const App = () => {
 
 		return activeProcess.startTime + process.duration * 1000 * 60;
 	};
-
 	const millisToMinutesAndSeconds = (millis: number) => {
 		const minutes = Math.floor(millis / 60000);
-		const seconds = ((millis % 6000) / 1000).toFixed(0);
+		const seconds = ((millis % 60000) / 1000).toFixed(0); // Corrected the modulo calculation
 		return `${minutes} minutes ${seconds} seconds`;
 	};
 
