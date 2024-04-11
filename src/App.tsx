@@ -555,7 +555,7 @@ const App = () => {
 										<div className="text-lg">
 											<p>
 												<span className="font-semibold">Time left:</span>{" "}
-												{dayjs(getRemainingTimeUnix(activeProcess)).format("mm")} minutes
+												{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
 											</p>
 											<p>
 												<span className="font-semibold">Pick up:</span>{" "}
