@@ -490,7 +490,7 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 					</button>
 				</div>
 				<div className="space-y-4">
-					<form className="flex space-x-4">
+					<form className="grid grid-cols-2 gap-4">
 						{isEditing && (
 							<div>
 								<label className="block font-semibold mb-1">Process ID</label>
