@@ -241,7 +241,7 @@ const App = () => {
 					<div className="grid grid-cols-2 gap-4 mb-4">
 						<div className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
 							<div className="flex justify-between items-center">
-								<h1 className="text-2xl font-bold text-white">Plot Management</h1>
+								<h1 className="text-2xl font-bold text-white">Land Management</h1>
 								<button
 									type="button"
 									onClick={() => setIsPlotManagementOpen(true)}
