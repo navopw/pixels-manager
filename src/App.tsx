@@ -246,6 +246,11 @@ const App = () => {
 		return activeProcess.startTime + process.duration * 1000 * 60;
 	};
 
+	const millisToMinutes = (millis: number) => {
+		const minutes = Math.floor(millis / 60000);
+		return `${minutes}`;
+	};
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white" key={rerenderKey}>
 			<header className="text-center mb-10">
@@ -578,7 +583,7 @@ const App = () => {
 												{getRemainingTimeUnix(activeProcess) > 0 && (
 													<p>
 														<span className="font-semibold">Time left:</span>{" "}
-														{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
+														{millisToMinutes(getRemainingTimeUnix(activeProcess))} minutes
 													</p>
 												)}
 												<p>
