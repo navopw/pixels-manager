@@ -12,37 +12,41 @@ type Plot = {
 type Process = {
 	id: number;
 	name: string;
-	time: number; // The total time a process takes
-
-	startTime?: number;
-	plotId?: number;
+	duration: number; // The total time a process takes
 };
+
+type ActiveProcess = {
+	id: number;
+	processId: number;
+	plotId: number;
+	startTime: number;
+}
 
 const initialProcesses: Process[] = [
 	{
 		id: 1,
 		name: "Chicken",
-		time: 60,
+		duration: 60,
 	},
 	{
 		id: 2,
 		name: "Honey",
-		time: 45,
+		duration: 45,
 	},
 	{
 		id: 3,
 		name: "Mine",
-		time: 90,
+		duration: 90,
 	},
 	{
 		id: 4,
 		name: "Cow",
-		time: 90,
+		duration: 90,
 	},
 	{
 		id: 5,
 		name: "Sauna VIP",
-		time: 60 * 8,
+		duration: 60 * 8,
 	},
 ];
 
@@ -88,7 +92,7 @@ const App = () => {
 	const [processes, setProcesses] = useState<Process[]>([]);
 	const [plots, setPlots] = useState<Plot[]>([]);
 
-	const [activeProcesses, setActiveProcesses] = useState<Process[]>([]);
+	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
 
 	// State
 	const [plotInputId, setPlotInputId] = useState<number>(0);
@@ -132,15 +136,6 @@ const App = () => {
 		} else {
 			setActiveProcesses(loadedActiveProcesses);
 		}
-
-		// Update active processes time with the time from processes
-		setActiveProcesses(prev => {
-			const newActiveProcesses = prev.map(process => {
-				const processFromProcesses = processes.find(p => p.id === process.id);
-				return processFromProcesses ? { ...process, time: processFromProcesses.time } : process;
-			});
-			return newActiveProcesses;
-		});
 	}, []);
 
 	// Persistence listener
@@ -165,11 +160,11 @@ const App = () => {
 		});
 	};
 
-	const createProcess = (processName: string, time: number) => {
+	const createProcess = (processName: string, duration: number) => {
 		const newProcess = {
 			id: Math.floor(Math.random() * 1000000),
 			name: processName,
-			time
+			duration
 		};
 		setProcesses(prev => [...prev, newProcess]);
 	};
@@ -182,10 +177,11 @@ const App = () => {
 		const processFound = processes.find(process => process.name === processName);
 		if (!processFound) return;
 
-		const newProcess = {
-			...processFound,
+		const newProcess: ActiveProcess = {
+			id: Math.floor(Math.random() * 1000000),
+			processId: processFound.id,
+			plotId,
 			startTime: Date.now(),
-			plotId
 		};
 
 		console.log("Starting process", newProcess);
@@ -320,7 +316,7 @@ const App = () => {
 									<div key={uuidv4()} className="flex items-center justify-between bg-gray-800 rounded-md p-4">
 										<div>
 											<p className="text-lg font-semibold">{process.name}</p>
-											<p>Duration: {process.time} minutes</p>
+											<p>Duration: {process.duration} minutes</p>
 										</div>
 										<button type="button" onClick={() => deleteProcess(process.id)} className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900">
 											Delete
@@ -377,47 +373,56 @@ const App = () => {
 						<h1 className="text-2xl font-bold mb-4">Active Processes</h1>
 
 						<div className="space-y-6">
-							{activeProcesses.sort((a, b) => (a.startTime! + a.time * 60 * 1000) - (b.startTime! + b.time * 60 * 1000)).map(process => (
-								<div key={uuidv4()} className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
-									<div className="flex justify-between items-center mb-4">
-										<h2 className="text-2xl font-bold">
-											{process.name} - {plots.find(plot => plot.id === process.plotId)?.name}
-										</h2>
-										<div>
-											<button type="button" onClick={() => resetProcess(process.id)} className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105">
-												Reset
-											</button>
-											<button type="button" onClick={() => deleteActiveProcess(process.id)} className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105">
-												Delete
-											</button>
+							{activeProcesses.map(activeProcess => {
+								const process = processes.find(p => p.id === activeProcess.processId);
+								const plot = plots.find(p => p.id === activeProcess.plotId);
+
+								if (!process || !plot) return null;
+								
+								return (
+									
+										<div key={uuidv4()} className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
+											<div className="flex justify-between items-center mb-4">
+												<h2 className="text-2xl font-bold">
+													{process.name} - {plot.name}
+												</h2>
+												<div>
+													<button type="button" onClick={() => resetProcess(activeProcess.id)} className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105">
+														Reset
+													</button>
+													<button type="button" onClick={() => deleteActiveProcess(activeProcess.id)} className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105">
+														Delete
+													</button>
+												</div>
+											</div>
+											<div className="text-lg mb-4">
+												<p>
+													<span className="font-semibold">Duration:</span> {dayjs(process.duration).format('HH:mm')}
+												</p>
+												<p> 
+													<span className="font-semibold">Start:</span> {dayjs(activeProcess.startTime).format('DD.MM.YYYY HH:mm')}
+												</p>
+												<p>
+													<span className="font-semibold">End:</span> {dayjs(activeProcess.startTime! + process.duration * 1000 * 60).format('DD.MM.YYYY HH:mm')}
+												</p>
+											</div>
+											<hr className="my-4 border-gray-800" />
+											<div className="text-lg">
+												<p>
+													<span className="font-semibold">Time left:</span> {dayjs(activeProcess.startTime! + process.duration * 1000 * 60).diff(dayjs(), 'minutes')} minutes
+												</p>
+												<p>
+													<span className="font-semibold">Pick up:</span> {dayjs(activeProcess.startTime! + process.duration * 1000 * 60).isBefore(Date.now()) ? (
+														<span role="img" aria-label="check" className="text-2xl">✅</span>
+													) : (
+														<span role="img" aria-label="cross" className="text-2xl">❌</span>
+													)}
+												</p>
+											</div>
 										</div>
-									</div>
-									<div className="text-lg mb-4">
-										<p>
-											<span className="font-semibold">Duration:</span> {dayjs(process.time).format('HH:mm')}
-										</p>
-										<p> 
-											<span className="font-semibold">Start:</span> {dayjs(process.startTime).format('DD.MM.YYYY HH:mm')}
-										</p>
-										<p>
-											<span className="font-semibold">End:</span> {dayjs(process.startTime! + process.time * 1000 * 60).format('DD.MM.YYYY HH:mm')}
-										</p>
-									</div>
-									<hr className="my-4 border-gray-800" />
-									<div className="text-lg">
-										<p>
-											<span className="font-semibold">Time left:</span> {dayjs(process.startTime! + process.time * 1000 * 60).diff(dayjs(), 'minutes')} minutes
-										</p>
-										<p>
-											<span className="font-semibold">Pick up:</span> {dayjs(process.startTime! + process.time * 1000 * 60).isBefore(Date.now()) ? (
-												<span role="img" aria-label="check" className="text-2xl">✅</span>
-											) : (
-												<span role="img" aria-label="cross" className="text-2xl">❌</span>
-											)}
-										</p>
-									</div>
-								</div>
-							))}
+									)
+								
+							})}
 						</div>
 					</div>
 				</div>
