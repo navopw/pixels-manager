@@ -526,7 +526,7 @@ const App = () => {
 
 						<div className="space-y-6">
 							{activeProcesses
-								.sort((a, b) => getRemainingTimeUnix(b) - getRemainingTimeUnix(a))
+								.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b))
 								.map(activeProcess => {
 									const process = processes.find(p => p.id === activeProcess.processId);
 									const plot = plots.find(p => p.id === activeProcess.plotId);
@@ -575,10 +575,12 @@ const App = () => {
 											</div>
 											<hr className="my-4 border-gray-800" />
 											<div className="text-lg">
-												<p>
-													<span className="font-semibold">Time left:</span>{" "}
-													{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
-												</p>
+												{getRemainingTimeUnix(activeProcess) < 0 && (
+													<p>
+														<span className="font-semibold">Time left:</span>{" "}
+														{dayjs(getRemainingTimeUnix(activeProcess)).format("m")} minutes
+													</p>
+												)}
 												<p>
 													<span className="font-semibold">Pick up:</span>{" "}
 													{getRemainingTimeUnix(activeProcess) < 0 ? (
