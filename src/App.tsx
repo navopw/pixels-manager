@@ -208,7 +208,7 @@ const App = () => {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white">
 			<header className="text-center mb-10">
-				<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">Pixels.xyz - Process Management</h1>
+				<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">Pixels.xyz - Manager</h1>
 				<p className="text-xl mt-2">
 					An extensive process management tool to farm in Pixels.xyz
 				</p>
