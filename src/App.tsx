@@ -94,6 +94,9 @@ const App = () => {
 	const [plots, setPlots] = useState<Plot[]>([]);
 	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
 
+	// Rerender key
+	const [rerenderKey, setRerenderKey] = useState<number>(0);
+
 	// Create plot
 	const [plotInputId, setPlotInputId] = useState<number>(0);
 	const [plotInputName, setPlotInputName] = useState<string>("");
@@ -152,8 +155,9 @@ const App = () => {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			window.location.reload();
-		}, 120000); // Reload every 2 minutes
+			setRerenderKey(prev => prev + 1);
+		}, 60000);
+
 		return () => clearInterval(interval);
 	}, []);
 
@@ -243,7 +247,7 @@ const App = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white">
+		<div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6 text-white" key={rerenderKey}>
 			<header className="text-center mb-10">
 				<div className="flex items-center justify-center space-x-4">
 					<h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
