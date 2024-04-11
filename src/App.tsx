@@ -490,7 +490,7 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 					</button>
 				</div>
 				<div className="space-y-4">
-					<form className="grid grid-cols-2 gap-4">
+					<form className="flex space-x-4">
 						{isEditing && (
 							<div>
 								<label className="block font-semibold mb-1">Process ID</label>
@@ -551,7 +551,7 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 							</button>
 						)}
 					</form>
-					<div className="space-y-4 mt-4">
+					<div className="grid grid-cols-2 gap-4">
 						{props.processes.map(process => (
 							<div
 								key={uuidv4()}
