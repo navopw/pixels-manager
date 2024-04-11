@@ -453,7 +453,7 @@ const App = () => {
 										>
 											<div>
 												<p className="text-lg font-semibold text-white">{process.name}</p>
-												<p>Duration: {process.duration} minutes</p>
+												<p>{process.duration} minutes</p>
 											</div>
 											<button
 												type="button"
