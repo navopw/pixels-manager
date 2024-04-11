@@ -97,7 +97,7 @@ const App = () => {
 	const [plotInputDescription, setPlotInputDescription] = useState<string>("");
 
 	// Process Selector
-	const [processSelector, setProcessSelector] = useState<number>(0);
+	const [processSelector, setProcessSelector] = useState<string>("");
 	const [plotSelector, setPlotSelector] = useState<number>(0);
 
 	const [isPlotManagementOpen, setIsPlotManagementOpen] = useState<boolean>(false);
@@ -182,8 +182,8 @@ const App = () => {
 		});
 	};
 
-	const startProcess = (id: number, plotId: number) => {
-		const processFound = processes.find(process => process.id === id);
+	const startProcess = (processName: string, plotId: number) => {
+		const processFound = processes.find(process => process.process === processName);
 
 		if (!processFound) return;
 
@@ -344,12 +344,12 @@ const App = () => {
 							<div>
 								<label className="block font-semibold mb-1">Process Selector</label>
 								<select
-									onChange={event => setProcessSelector(parseInt(event.target.value))}
+									onChange={event => setProcessSelector(event.target.value)}
 									value={processSelector}
 									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
 								>
 									{processes.map(process => (
-										<option key={uuidv4()} value={process.id}>
+										<option key={uuidv4()} value={process.process}>
 											{process.process}
 										</option>
 									))}
