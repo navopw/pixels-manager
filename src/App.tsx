@@ -175,7 +175,10 @@ const App = () => {
 	const startProcess = (processId: number, plotId: number) => {
 		const processFound = processes.find(process => process.id === processId);
 
-		if (!processFound) return;
+		if (!processFound) {
+			alert("Process not found");
+			return;
+		}
 
 		const newProcess: ActiveProcess = {
 			id: Math.floor(Math.random() * 1000000),
