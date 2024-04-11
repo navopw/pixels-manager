@@ -480,7 +480,7 @@ const App = () => {
 								<select
 									onChange={event => setCreateActiveProcessProcessId(parseInt(event.target.value))}
 									value={createActiveProcessProcessId ? createActiveProcessProcessId : "0"}
-									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
 								>
 									<option value="None">Please select</option>
 									{processes.map(process => (
@@ -496,7 +496,7 @@ const App = () => {
 								<select
 									onChange={event => setCreateActiveProcessPlotId(parseInt(event.target.value))}
 									value={createActiveProcessPlotId ? createActiveProcessPlotId : "None"}
-									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
 								>
 									<option value="None">Please select</option>
 									{plots.map(plot => (
