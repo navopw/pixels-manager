@@ -95,7 +95,7 @@ const App = () => {
 	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
 
 	// Rerender key
-	const currentTime = Date.now();
+	const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
 	// Create plot
 	const [plotInputId, setPlotInputId] = useState<number>(0);
@@ -153,15 +153,13 @@ const App = () => {
 		localStorage.setItem("activeProcesses", JSON.stringify(activeProcesses));
 	}, [plots, processes, activeProcesses]);
 
-	/*
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setCurrentTime(Date.now());
-		}, 5000);
+		}, 10000);
 
 		return () => clearInterval(interval);
 	}, []);
-	*/
 
 	// Plot
 	const createPlot = (id: number, name: string, description: string) => {
