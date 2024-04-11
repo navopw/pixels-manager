@@ -595,7 +595,7 @@ const App = () => {
 													)}
 												</div>
 												<div>
-													<span className="font-semibold">Pick up:</span>{" "}
+													<span className="font-semibold">Ready:</span>{" "}
 													{getRemainingTimeUnix(activeProcess) < 0 ? (
 														<span role="img" aria-label="check" className="text-sm">
 															✅
