@@ -246,9 +246,10 @@ const App = () => {
 		return activeProcess.startTime + process.duration * 1000 * 60;
 	};
 
-	const millisToMinutes = (millis: number) => {
+	const millisToMinutesAndSeconds = (millis: number) => {
 		const minutes = Math.floor(millis / 60000);
-		return `${minutes}`;
+		const seconds = ((millis % 6000) / 1000).toFixed(0);
+		return `${minutes} minutes | ${seconds} seconds`;
 	};
 
 	return (
@@ -583,7 +584,7 @@ const App = () => {
 												{getRemainingTimeUnix(activeProcess) > 0 && (
 													<p>
 														<span className="font-semibold">Time left:</span>{" "}
-														{millisToMinutes(getRemainingTimeUnix(activeProcess))} minutes
+														{millisToMinutesAndSeconds(getRemainingTimeUnix(activeProcess))}
 													</p>
 												)}
 												<p>
