@@ -95,7 +95,7 @@ const App = () => {
 	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
 
 	// Rerender key
-	const [rerenderKey, setRerenderKey] = useState<number>(0);
+	const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
 	// Create plot
 	const [plotInputId, setPlotInputId] = useState<number>(0);
@@ -155,7 +155,7 @@ const App = () => {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setRerenderKey(prev => prev + 1);
+			setCurrentTime(Date.now());
 		}, 1000);
 
 		return () => clearInterval(interval);
@@ -203,7 +203,7 @@ const App = () => {
 			id: Math.floor(Math.random() * 1000000),
 			processId: processFound.id,
 			plotId,
-			startTime: Date.now()
+			startTime: currentTime
 		};
 
 		setActiveProcesses(prev => [...prev, newProcess]);
@@ -217,7 +217,7 @@ const App = () => {
 		if (processIndex !== -1) {
 			setActiveProcesses(prev => {
 				const updatedProcesses = [...prev];
-				updatedProcesses[processIndex].startTime = Date.now();
+				updatedProcesses[processIndex].startTime = currentTime
 				return updatedProcesses;
 			});
 		}
@@ -234,7 +234,6 @@ const App = () => {
 		const process = processes.find(p => p.id === activeProcess.processId);
 		if (!process) return 0;
 
-		const currentTime = Date.now();
 		const endTime = activeProcess.startTime + process.duration * 1000 * 60;
 		return endTime - currentTime;
 	};
@@ -534,7 +533,7 @@ const App = () => {
 							</button>
 						</div>
 
-						<div className="space-y-4" key={rerenderKey}>
+						<div className="space-y-4">
 							{activeProcesses
 								.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b))
 								.map(activeProcess => {
