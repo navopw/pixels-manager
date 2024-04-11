@@ -341,7 +341,7 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 				onClick={e => e.stopPropagation()}
 			>
 				<div className="flex justify-between items-center mb-4">
-					<h1 className="text-2xl font-bold">Plot Management</h1>
+					<h1 className="text-2xl font-bold">Land Management</h1>
 					<button
 						type="button"
 						onClick={props.onClose}
@@ -353,30 +353,30 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 				<div className="space-y-4">
 					<form className="grid grid-cols-4 gap-4">
 						<div>
-							<label className="block font-semibold mb-1">Plot ID</label>
+							<label className="block font-semibold mb-1">Land ID</label>
 							<input
 								type="number"
-								placeholder="Plot ID"
+								placeholder="Land ID"
 								onChange={event => setPlotInputId(parseInt(event.target.value))}
 								value={plotInputId}
 								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
 							/>
 						</div>
 						<div>
-							<label className="block font-semibold mb-1">Plot Name</label>
+							<label className="block font-semibold mb-1">Land Name</label>
 							<input
 								type="text"
-								placeholder="Plot Name"
+								placeholder="Land Name"
 								onChange={event => setPlotInputName(event.target.value)}
 								value={plotInputName}
 								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
 							/>
 						</div>
 						<div>
-							<label className="block font-semibold mb-1">Plot Description</label>
+							<label className="block font-semibold mb-1">Land Description</label>
 							<input
 								type="text"
-								placeholder="Plot Description"
+								placeholder="Land Description"
 								onChange={event => setPlotInputDescription(event.target.value)}
 								value={plotInputDescription}
 								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
