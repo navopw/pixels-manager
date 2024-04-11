@@ -503,11 +503,11 @@ const App = () => {
 												{dayjs(
 													activeProcess.startTime! + process.duration * 1000 * 60
 												).isBefore(Date.now()) ? (
-													<span role="img" aria-label="check" className="text-2xl">
+													<span role="img" aria-label="check" className="text-xl">
 														✅
 													</span>
 												) : (
-													<span role="img" aria-label="cross" className="text-2xl">
+													<span role="img" aria-label="cross" className="text-xl">
 														❌
 													</span>
 												)}
