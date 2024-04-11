@@ -54,37 +54,37 @@ const initialPlots: Plot[] = [
 	{
 		id: 4768,
 		name: "4768",
-		description: "Farm (60x), Silk (4x), Chicken" // Added description to plots
+		description: "Farm (60x), Silk (4x), Chicken"
 	},
 	{
 		id: 4156,
 		name: "4156",
-		description: "Farm (60x)" // Added description to plots
+		description: "Farm (60x)"
 	},
 	{
 		id: 4172,
 		name: "4172",
-		description: "4x Honey" // Added description to plots
+		description: "4x Honey"
 	},
 	{
 		id: 4171,
 		name: "4171",
-		description: "Chicken" // Added description to plots
+		description: "Chicken"
 	},
 	{
 		id: 1309,
 		name: "1309",
-		description: "4x Salt Mine" // Added description to plots
+		description: "4x Salt Mine"
 	},
 	{
 		id: 0,
 		name: "Terraville",
-		description: "x" // Added description to plots
+		description: ""
 	},
 	{
 		id: -1,
 		name: "Sauna",
-		description: "Sauna description" // Added description to plots
+		description: "Sauna description"
 	}
 ];
 
