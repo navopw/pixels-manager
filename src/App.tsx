@@ -150,6 +150,13 @@ const App = () => {
 		localStorage.setItem("activeProcesses", JSON.stringify(activeProcesses));
 	}, [plots, processes, activeProcesses]);
 
+	useEffect(() => {
+		const interval = setInterval(() => {
+			window.location.reload();
+		}, 120000); // Reload every 2 minutes
+		return () => clearInterval(interval);
+	}, []);
+
 	// Plot
 	const createPlot = (id: number, name: string, description: string) => {
 		setPlots(prev => {
