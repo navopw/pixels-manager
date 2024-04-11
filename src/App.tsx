@@ -505,7 +505,7 @@ const App = () => {
 						</div>
 
 						<div className="space-y-6">
-							{activeProcesses.sort((a, b) => getRemainingTimeUnix(a) - getRemainingTimeUnix(b)).map(activeProcess => {
+							{activeProcesses.sort((a, b) => getRemainingTimeUnix(b) - getRemainingTimeUnix(a)).map(activeProcess => {
 								const process = processes.find(p => p.id === activeProcess.processId);
 								const plot = plots.find(p => p.id === activeProcess.plotId);
 
