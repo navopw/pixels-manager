@@ -84,7 +84,7 @@ const initialPlots: Plot[] = [
 	{
 		id: -1,
 		name: "Sauna",
-		description: "Sauna description"
+		description: ""
 	}
 ];
 
@@ -141,6 +141,16 @@ const App = () => {
 
 	const deletePlot = (id: number) => {
 		setPlots(prev => prev.filter(plot => plot.id !== id));
+	};
+
+	const updatePlot = (id: number, name: string, description: string) => {
+		const updatedPlots = plots.map(plot => {
+			if (plot.id === id) {
+				return { ...plot, name, description };
+			}
+			return plot;
+		});
+		setPlots(updatedPlots);
 	};
 
 	// Process
@@ -202,6 +212,7 @@ const App = () => {
 				onClose={() => setIsPlotManagementOpen(false)}
 				onPlotCreate={createPlot}
 				onPlotDelete={deletePlot}
+				onPlotUpdate={updatePlot}
 				plots={plots}
 			/>
 
@@ -296,12 +307,16 @@ type PlotManagementDialogProps = {
 	plots: Plot[];
 	onPlotDelete: (id: number) => void;
 	onPlotCreate: (name: string, description: string) => void;
+	onPlotUpdate: (id: number, name: string, description: string) => void;
 };
 
 const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 	const [plotInputId, setPlotInputId] = useState(0);
 	const [plotInputName, setPlotInputName] = useState("");
 	const [plotInputDescription, setPlotInputDescription] = useState("");
+
+	// Editing
+	const [isEditing, setIsEditing] = useState(false);
 
 	if (!props.isOpen) return null;
 
@@ -319,7 +334,7 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 					<button
 						type="button"
 						onClick={props.onClose}
-						className="bg-red-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+						className="bg-red-800 font-semibold py-2 px-4 rounded-full focus:outline-none"
 					>
 						Close
 					</button>
@@ -343,7 +358,7 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 								placeholder="Plot Name"
 								onChange={event => setPlotInputName(event.target.value)}
 								value={plotInputName}
-								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
 							/>
 						</div>
 						<div>
@@ -353,16 +368,32 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 								placeholder="Plot Description"
 								onChange={event => setPlotInputDescription(event.target.value)}
 								value={plotInputDescription}
-								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
 							/>
 						</div>
-						<button
-							type="button"
-							onClick={() => props.onPlotCreate(plotInputName, plotInputDescription)}
-							className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-9000"
-						>
-							Add Plot
-						</button>
+						{isEditing ? (
+							<button
+								type="button"
+								onClick={() => {
+									props.onPlotUpdate(plotInputId, plotInputName, plotInputDescription);
+									setIsEditing(false);
+									setPlotInputId(0);
+									setPlotInputName("");
+									setPlotInputDescription("");
+								}}
+								className="bg-green-800 hover:bg-green-900 font-semibold py-2 px-4 rounded-md focus:outline-none"
+							>
+								Update Plot
+							</button>
+						) : (
+							<button
+								type="button"
+								onClick={() => props.onPlotCreate(plotInputName, plotInputDescription)}
+								className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none"
+							>
+								Add Plot
+							</button>
+						)}
 					</form>
 					<div className="space-y-4 mt-4">
 						{props.plots.map(plot => (
@@ -374,13 +405,27 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 									<p className="text-lg font-semibold">{plot.name}</p>
 									<p className="text-lg font-semibold">{plot.description}</p>
 								</div>
-								<button
-									type="button"
-									onClick={() => props.onPlotDelete(plot.id)}
-									className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-								>
-									Delete
-								</button>
+								<div className="flex space-x-2">
+									<button
+										type="button"
+										onClick={() => {
+											setIsEditing(true);
+											setPlotInputId(plot.id);
+											setPlotInputName(plot.name);
+											setPlotInputDescription(plot.description);
+										}}
+										className="bg-yellow-800 hover:bg-yellow-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Edit
+									</button>
+									<button
+										type="button"
+										onClick={() => props.onPlotDelete(plot.id)}
+										className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Delete
+									</button>
+								</div>
 							</div>
 						))}
 					</div>
