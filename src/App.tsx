@@ -51,7 +51,7 @@ const initialPlots: Plot[] = [
 	{
 		id: 4768,
 		name: "4768",
-		description: "Farm (60x), Mines (4x), Chicken", // Added description to plots
+		description: "Farm (60x), Silk (4x), Chicken", // Added description to plots
 	},
 	{
 		id: 4156,
@@ -168,7 +168,7 @@ const App = () => {
 
 	const createProcess = (process: string, time: number) => {
 		const newProcess = {
-			id: processes.length + 1,
+			id: Math.floor(Math.random() * 1000000),
 			process,
 			time
 		};
