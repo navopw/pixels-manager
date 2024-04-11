@@ -429,7 +429,7 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 											setPlotInputName(plot.name);
 											setPlotInputDescription(plot.description);
 										}}
-										className="bg-yellow-800 hover:bg-yellow-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+										className="bg-yellow-500 hover:bg-yellow-600 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 									>
 										Edit
 									</button>
