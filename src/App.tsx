@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
-import { Link } from "lucide-react";
+import { Link, RefreshCcw, Trash, XIcon } from "lucide-react";
 
 type Plot = {
 	id: number;
@@ -518,9 +518,9 @@ const App = () => {
 							<button
 								type="button"
 								onClick={() => setActiveProcesses([])}
-								className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+								className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 							>
-								Clear All
+								<Trash className="w-6 h-6" />
 							</button>
 						</div>
 
@@ -542,20 +542,20 @@ const App = () => {
 												<h2 className="text-2xl font-bold">
 													{process.name} - {plot.name}
 												</h2>
-												<div>
+												<div className="flex space-x-2">
 													<button
 														type="button"
 														onClick={() => resetActiveProcess(activeProcess.id)}
-														className="bg-orange-500 hover:bg-orange-600 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
+														className="bg-green-600 hover:bg-green-700 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-4 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 													>
-														Reset timer
+														<RefreshCcw className="w-6 h-6" />
 													</button>
 													<button
 														type="button"
 														onClick={() => deleteActiveProcess(activeProcess.id)}
-														className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-300 ease-in-out transform hover:scale-105"
+														className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-2 rounded-full focus:outline-none focus:ring-4 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 													>
-														Delete
+														<XIcon className="w-6 h-6"  />
 													</button>
 												</div>
 											</div>
