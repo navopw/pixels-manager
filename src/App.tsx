@@ -570,14 +570,16 @@ const App = () => {
 													<span className="font-semibold">Duration:</span>{" "}
 													{process.duration} minutes
 												</p>
-												<p>
-													<span className="font-semibold">Start:</span>{" "}
-													{dayjs(activeProcess.startTime).format("DD.MM.YYYY HH:mm")}
-												</p>
-												<p>
-													<span className="font-semibold">End:</span>{" "}
-													{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
-												</p>
+												<div className="flex justify-between">
+													<div>
+														<span className="font-semibold">Start:</span>{" "}
+														{dayjs(activeProcess.startTime).format("DD.MM.YYYY HH:mm")}
+													</div>
+													<div>
+														<span className="font-semibold">End:</span>{" "}
+														{dayjs(getEndTime(activeProcess)).format("DD.MM.YYYY HH:mm")}
+													</div>
+												</div>
 											</div>
 											<hr className="my-4 border-gray-800" />
 											<div className="text-lg">
