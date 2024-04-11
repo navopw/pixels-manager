@@ -89,20 +89,25 @@ const initialPlots: Plot[] = [
 ];
 
 const App = () => {
+	// Persistent states	
 	const [processes, setProcesses] = useState<Process[]>([]);
 	const [plots, setPlots] = useState<Plot[]>([]);
-
 	const [activeProcesses, setActiveProcesses] = useState<ActiveProcess[]>([]);
 
-	// State
+	// Create plot
 	const [plotInputId, setPlotInputId] = useState<number>(0);
 	const [plotInputName, setPlotInputName] = useState<string>("");
 	const [plotInputDescription, setPlotInputDescription] = useState<string>("");
 
-	// Process Selector
-	const [processSelector, setProcessSelector] = useState<number>(0);
-	const [plotSelector, setPlotSelector] = useState<number>(0);
+	// Create active process
+	const [createProcessName, setCreateProcessName] = useState<string>("");
+	const [createProcessDuration, setCreateProcessDuration] = useState<number>(0);
 
+	// Create active process
+	const [createActiveProcessProcessId, setCreateActiveProcessProcessId] = useState<number>(0);
+	const [createActiveProcessPlotId, setCreateActiveProcessPlotId] = useState<number>(0);
+
+	// Modals
 	const [isPlotManagementOpen, setIsPlotManagementOpen] = useState<boolean>(false);
 	const [isProcessManagementOpen, setIsProcessManagementOpen] = useState<boolean>(false);
 
@@ -188,8 +193,8 @@ const App = () => {
 		};
 
 		setActiveProcesses(prev => [...prev, newProcess]);
-		setProcessSelector(0);
-		setPlotSelector(0);
+		setCreateActiveProcessProcessId(0);
+		setCreateActiveProcessPlotId(0);
 	};
 
 	const resetProcess = (id: number) => {
@@ -360,12 +365,7 @@ const App = () => {
 									className="flex justify-between items-centert space-x-4"
 									onSubmit={e => {
 										e.preventDefault();
-										const process = (document.getElementById("process-input") as HTMLInputElement)
-											.value;
-										const time = parseInt(
-											(document.getElementById("time-input") as HTMLInputElement).value
-										);
-										createProcess(process, time);
+										createProcess(createProcessName, createProcessDuration);
 									}}
 								>
 									<div className="flex-1">
@@ -377,6 +377,8 @@ const App = () => {
 											type="text"
 											placeholder="Process"
 											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+											value={createProcessName}
+											onChange={event => setCreateProcessName(event.target.value)}
 										/>
 									</div>
 									<div className="flex-1">
@@ -388,6 +390,8 @@ const App = () => {
 											type="number"
 											placeholder="Time"
 											className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+											value={createProcessDuration}
+											onChange={event => setCreateProcessDuration(parseInt(event.target.value))}
 										/>
 									</div>
 									<button
@@ -430,8 +434,8 @@ const App = () => {
 							<div>
 								<label className="block font-semibold mb-1">Process Selector</label>
 								<select
-									onChange={event => setProcessSelector(parseInt(event.target.value))}
-									value={processSelector ? processSelector : "0"}
+									onChange={event => setCreateActiveProcessProcessId(parseInt(event.target.value))}
+									value={createActiveProcessProcessId ? createActiveProcessProcessId : "0"}
 									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
 								>
 									<option value="None">Please select</option>
@@ -446,8 +450,8 @@ const App = () => {
 							<div>
 								<label className="block font-semibold mb-1">Plot Selector</label>
 								<select
-									onChange={event => setPlotSelector(parseInt(event.target.value))}
-									value={plotSelector ? plotSelector : "None"}
+									onChange={event => setCreateActiveProcessPlotId(parseInt(event.target.value))}
+									value={createActiveProcessPlotId ? createActiveProcessPlotId : "None"}
 									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
 								>
 									<option value="None">Please select</option>
@@ -461,8 +465,8 @@ const App = () => {
 
 							<button
 								type="button"
-								onClick={() => startProcess(processSelector, plotSelector)}
-								className="bg-green-800 hover:bg-green-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+								onClick={() => startProcess(createActiveProcessProcessId, createActiveProcessPlotId)}
+								className="bg-green-800 hover:bg-green-9000 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-900"
 							>
 								Start Process
 							</button>
@@ -525,7 +529,7 @@ const App = () => {
 											</p>
 											<p>
 												<span className="font-semibold">End:</span>{" "}
-												{dayjs(activeProcess.startTime! + process.duration * 1000 * 60).format(
+												{dayjs(activeProcess.startTime + process.duration * 1000 * 60).format(
 													"DD.MM.YYYY HH:mm"
 												)}
 											</p>
