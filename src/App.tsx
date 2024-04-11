@@ -249,7 +249,7 @@ const App = () => {
 	const millisToMinutesAndSeconds = (millis: number) => {
 		const minutes = Math.floor(millis / 60000);
 		const seconds = ((millis % 6000) / 1000).toFixed(0);
-		return `${minutes} minutes | ${seconds} seconds`;
+		return `${minutes} minutes ${seconds} seconds`;
 	};
 
 	return (
@@ -568,7 +568,7 @@ const App = () => {
 											<div className="text-lg mb-4">
 												<p>
 													<span className="font-semibold">Duration:</span>{" "}
-													{dayjs(process.duration).format("HH:mm")}
+													{process.duration} minutes
 												</p>
 												<p>
 													<span className="font-semibold">Start:</span>{" "}
