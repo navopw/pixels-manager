@@ -156,7 +156,7 @@ const App = () => {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setRerenderKey(prev => prev + 1);
-		}, 60000);
+		}, 1000);
 
 		return () => clearInterval(interval);
 	}, []);
