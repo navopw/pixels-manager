@@ -11,9 +11,8 @@ type Plot = {
 
 type Process = {
 	id: number;
-	process: string;
+	name: string;
 	time: number; // The total time a process takes
-
 
 	startTime?: number;
 	plotId?: number;
@@ -22,27 +21,27 @@ type Process = {
 const initialProcesses: Process[] = [
 	{
 		id: 1,
-		process: "Chicken",
+		name: "Chicken",
 		time: 60,
 	},
 	{
 		id: 2,
-		process: "Honey",
+		name: "Honey",
 		time: 45,
 	},
 	{
 		id: 3,
-		process: "Mine",
+		name: "Mine",
 		time: 90,
 	},
 	{
 		id: 4,
-		process: "Cow",
+		name: "Cow",
 		time: 90,
 	},
 	{
 		id: 5,
-		process: "Sauna VIP",
+		name: "Sauna VIP",
 		time: 60 * 8,
 	},
 ];
@@ -166,10 +165,10 @@ const App = () => {
 		});
 	};
 
-	const createProcess = (process: string, time: number) => {
+	const createProcess = (processName: string, time: number) => {
 		const newProcess = {
 			id: Math.floor(Math.random() * 1000000),
-			process,
+			name: processName,
 			time
 		};
 		setProcesses(prev => [...prev, newProcess]);
@@ -180,7 +179,7 @@ const App = () => {
 	};
 
 	const startProcess = (processName: string, plotId: number) => {
-		const processFound = processes.find(process => process.process === processName);
+		const processFound = processes.find(process => process.name === processName);
 		if (!processFound) return;
 
 		const newProcess = {
@@ -320,7 +319,7 @@ const App = () => {
 								{processes.map(process => (
 									<div key={uuidv4()} className="flex items-center justify-between bg-gray-800 rounded-md p-4">
 										<div>
-											<p className="text-lg font-semibold">{process.process}</p>
+											<p className="text-lg font-semibold">{process.name}</p>
 											<p>Duration: {process.time} minutes</p>
 										</div>
 										<button type="button" onClick={() => deleteProcess(process.id)} className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900">
@@ -346,8 +345,8 @@ const App = () => {
 									className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
 								>
 									{processes.map(process => (
-										<option key={uuidv4()} value={process.process}>
-											{process.process}
+										<option key={uuidv4()} value={process.name}>
+											{process.name}
 										</option>
 									))}
 								</select>
@@ -382,7 +381,7 @@ const App = () => {
 								<div key={uuidv4()} className="bg-gradient-to-r from-blue-800 to-purple-900 shadow-lg rounded-lg p-6">
 									<div className="flex justify-between items-center mb-4">
 										<h2 className="text-2xl font-bold">
-											{process.process} - {plots.find(plot => plot.id === process.plotId)?.name}
+											{process.name} - {plots.find(plot => plot.id === process.plotId)?.name}
 										</h2>
 										<div>
 											<button type="button" onClick={() => resetProcess(process.id)} className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105">
