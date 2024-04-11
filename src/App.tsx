@@ -546,9 +546,9 @@ const App = () => {
 													<button
 														type="button"
 														onClick={() => resetActiveProcess(activeProcess.id)}
-														className="bg-yellow-700 hover:bg-yellow-800 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
+														className="bg-orange-500 hover:bg-orange-600 font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-gray-900 mr-4 transition duration-300 ease-in-out transform hover:scale-105"
 													>
-														Reset
+														Reset timer
 													</button>
 													<button
 														type="button"
