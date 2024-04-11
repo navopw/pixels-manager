@@ -186,6 +186,16 @@ const App = () => {
 		setActiveProcesses(prev => [...prev, newProcess]);
 	};
 
+	const updateProcess = (id: number, name: string, duration: number) => {
+		const updatedProcesses = processes.map(process => {
+			if (process.id === id) {
+				return { ...process, name, duration };
+			}
+			return process;
+		});
+		setProcesses(updatedProcesses);
+	};
+
 	// Active process
 	const resetActiveProcess = (id: number) => {
 		const processIndex = activeProcesses.findIndex(process => process.id === id);
@@ -221,6 +231,7 @@ const App = () => {
 				onClose={() => setIsProcessManagementOpen(false)}
 				onProcessCreate={createProcess}
 				onProcessDelete={deleteProcess}
+				onProcessUpdate={updateProcess}
 				processes={processes}
 			/>
 
@@ -434,7 +445,6 @@ const PlotManagementDialog = (props: PlotManagementDialogProps) => {
 		</div>
 	);
 };
-
 // Process management
 type ProcessManagementDialogProps = {
 	isOpen: boolean;
@@ -443,11 +453,16 @@ type ProcessManagementDialogProps = {
 	processes: Process[];
 	onProcessDelete: (id: number) => void;
 	onProcessCreate: (name: string, duration: number) => void;
+	onProcessUpdate: (id: number, name: string, duration: number) => void;
 };
 
 const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
-	const [createProcessName, setCreateProcessName] = useState("");
-	const [createProcessDuration, setCreateProcessDuration] = useState(0);
+	const [processInputId, setProcessInputId] = useState(0);
+	const [processInputName, setProcessInputName] = useState("");
+	const [processInputDuration, setProcessInputDuration] = useState(0);
+
+	// Editing
+	const [isEditing, setIsEditing] = useState(false);
 
 	if (!props.isOpen) return null;
 
@@ -471,40 +486,60 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 					</button>
 				</div>
 				<div className="space-y-4">
-					<form className="flex justify-between space-x-4">
-						<div className="flex-1">
-							<label htmlFor="process-input" className="block font-semibold mb-1">
-								Process
-							</label>
+					<form className="grid grid-cols-4 gap-4">
+						<div>
+							<label className="block font-semibold mb-1">Process ID</label>
 							<input
-								id="process-input"
-								type="text"
-								placeholder="Process"
-								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-								value={createProcessName}
-								onChange={event => setCreateProcessName(event.target.value)}
-							/>
-						</div>
-						<div className="flex-1">
-							<label htmlFor="time-input" className="block font-semibold mb-1">
-								Time (minutes)
-							</label>
-							<input
-								id="time-input"
 								type="number"
-								placeholder="Time"
+								placeholder="Process ID"
+								onChange={event => setProcessInputId(parseInt(event.target.value))}
+								value={processInputId}
 								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-								value={createProcessDuration}
-								onChange={event => setCreateProcessDuration(parseInt(event.target.value))}
 							/>
 						</div>
-						<button
-							type="button"
-							onClick={() => props.onProcessCreate(createProcessName, createProcessDuration)}
-							className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-						>
-							Create Process
-						</button>
+						<div>
+							<label className="block font-semibold mb-1">Process Name</label>
+							<input
+								type="text"
+								placeholder="Process Name"
+								onChange={event => setProcessInputName(event.target.value)}
+								value={processInputName}
+								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
+							/>
+						</div>
+						<div>
+							<label className="block font-semibold mb-1">Process Duration</label>
+							<input
+								type="number"
+								placeholder="Process Duration"
+								onChange={event => setProcessInputDuration(parseInt(event.target.value))}
+								value={processInputDuration}
+								className="w-full bg-gray-800 rounded-md px-3 py-2 focus:outline-none"
+							/>
+						</div>
+						{isEditing ? (
+							<button
+								type="button"
+								onClick={() => {
+									props.onProcessUpdate(processInputId, processInputName, processInputDuration);
+									setIsEditing(false);
+									setProcessInputId(0);
+									setProcessInputName("");
+									setProcessInputDuration(0);
+								}}
+								className="bg-green-800 hover:bg-green-900 font-semibold py-2 px-4 rounded-md focus:outline-none"
+							>
+								Update Process
+							</button>
+						) : (
+							<button
+								type="button"
+								onClick={() => props.onProcessCreate(processInputName, processInputDuration)}
+								className="bg-blue-800 hover:bg-blue-900 font-semibold py-2 px-4 rounded-md focus:outline-none"
+							>
+								Add Process
+							</button>
+						)}
 					</form>
 					<div className="space-y-4 mt-4">
 						{props.processes.map(process => (
@@ -516,13 +551,27 @@ const ProcessManagementDialog = (props: ProcessManagementDialogProps) => {
 									<p className="text-lg font-semibold text-white">{process.name}</p>
 									<p>{process.duration} minutes</p>
 								</div>
-								<button
-									type="button"
-									onClick={() => props.onProcessDelete(process.id)}
-									className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-								>
-									Delete
-								</button>
+								<div className="flex space-x-2">
+									<button
+										type="button"
+										onClick={() => {
+											setIsEditing(true);
+											setProcessInputId(process.id);
+											setProcessInputName(process.name);
+											setProcessInputDuration(process.duration);
+										}}
+										className="bg-yellow-800 hover:bg-yellow-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Edit
+									</button>
+									<button
+										type="button"
+										onClick={() => props.onProcessDelete(process.id)}
+										className="bg-red-800 hover:bg-red-900 font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+									>
+										Delete
+									</button>
+								</div>
 							</div>
 						))}
 					</div>
